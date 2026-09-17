@@ -19,7 +19,6 @@
   #scr-check { justify-content:flex-start; padding-top:calc(40px + env(safe-area-inset-top));
                padding-bottom:calc(40px + env(safe-area-inset-bottom));
                overflow-y:auto; -webkit-overflow-scrolling:touch; touch-action:pan-y; overscroll-behavior:contain; }
-  #scr-check.active { pointer-events:auto; }
   .upd-header { font-size:15px; color:#8a8a8a; letter-spacing:.3px; margin-bottom:34px; }
   .miui-logo-big { font-size:40px; font-weight:200; letter-spacing:6px; margin-bottom:6px; }
   .miui-ver { font-size:13px; color:#777; margin-bottom:36px; letter-spacing:1px; }
@@ -49,7 +48,9 @@
   .pct span { font-size:30px; font-weight:200; color:#bbb; }
   .bar-wrap { width:min(78vw,460px); margin-bottom:20px; }
   .status { font-size:14.5px; color:#d5d5d5; min-height:22px; text-align:center; }
-  .sub-status { font-size:12px; color:#777; margin-top:8px; font-family:'Courier New',monospace; min-height:16px; }
+  .feature-chip { display:none; margin-top:14px; font-size:12.5px; color:#ff9d4d; background:#1c130a;
+                  border:1px solid #3a2a18; border-radius:20px; padding:6px 14px; letter-spacing:.3px; }
+  .sub-status { font-size:12px; color:#777; margin-top:10px; font-family:'Courier New',monospace; min-height:16px; }
   .install-warn { position:absolute; bottom:calc(26px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%);
                   width:min(90vw,440px); background:#141414; border:1px solid #333; border-radius:12px;
                   padding:12px 14px; font-size:13px; color:#e8e8e8; text-align:center; line-height:1.5; }
@@ -94,13 +95,14 @@
   <div class="miui-ver">текущая версия: 14.0.4.0.TMHRUXM</div>
 
   <div class="upd-card">
-    <h2>Доступно обновление MIUI 14.0.7.0</h2>
-    <div class="meta">2,4 ГБ&nbsp;&nbsp;|&nbsp;&nbsp;Патч безопасности: сентябрь 2026</div>
+    <h2>Доступно обновление до MIUI 15.0.2.0</h2>
+    <div class="meta">3,1 ГБ&nbsp;&nbsp;|&nbsp;&nbsp;Патч безопасности: сентябрь 2026</div>
     <ul>
-      <li>Система: повышена стабильность и производительность</li>
+      <li>Новый дизайн интерфейса и анимации системы</li>
+      <li>Функции ИИ: улучшение фото и удаление объектов</li>
+      <li>Обновлённый Пункт управления</li>
+      <li>Повышена автономность и стабильность системы</li>
       <li>Обновлены патчи безопасности Android</li>
-      <li>Исправлены известные проблемы с батареей</li>
-      <li>Оптимизирована работа фоновых приложений</li>
     </ul>
   </div>
 
@@ -112,7 +114,7 @@
   </div>
 
   <button class="btn" id="btn-update">Обновить</button>
-  <div class="foot-note">Рекомендуется подключение к Wi-Fi.<br>Установка займёт около 10 минут.</div>
+  <div class="foot-note">Рекомендуется подключение к Wi-Fi.<br>Установка займёт около 15 минут.</div>
 </div>
 
 <!-- ЭКРАН 2 -->
@@ -139,6 +141,7 @@
     </svg>
   </div>
   <div class="status" id="status-text">Установка обновления системы…</div>
+  <div class="feature-chip" id="feature-chip"></div>
   <div class="sub-status" id="sub-status"></div>
   <div class="install-warn"><b>⚠ Не выключайте устройство.</b><br>Телефоном нельзя пользоваться до завершения обновления.</div>
 </div>
@@ -160,7 +163,7 @@
     <path class="check-mark" d="M30 52 L44 66 L71 37"/>
   </svg>
   <h1>Обновление завершено</h1>
-  <div class="ver">MIUI 14.0.7.0.TMHRUXM • установлено успешно<br>Все данные сохранены</div>
+  <div class="ver">MIUI 15.0.2.0.TMHRUXM • установлено успешно<br>Все данные сохранены</div>
   <button class="btn" id="btn-finish">Завершить</button>
 </div>
 
@@ -168,7 +171,7 @@
 
 <script>
 (function(){
-  const DURATION = 5 * 60 * 1000;   // ← 5 минут, можно менять
+  const DURATION = 7 * 60 * 1000;   // ← 7 минут
   const $ = id => document.getElementById(id);
 
   function show(id){
@@ -189,7 +192,7 @@
   }
   document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') keepAwake(); });
 
-  /* --- «агрессивный» фуллскрин: если вышел — просим обратно по тапу --- */
+  /* --- «агрессивный» фуллскрин --- */
   let installing = false;
   document.addEventListener('fullscreenchange', ()=>{
     $('fs-overlay').style.display = (!document.fullscreenElement && installing) ? 'flex' : 'none';
@@ -202,7 +205,7 @@
   window.addEventListener('beforeunload', e=>{ if(installing){ e.preventDefault(); e.returnValue=''; } });
 
   /* --- прогресс с реалистичными «залипаниями» --- */
-  const waypoints = [[0,0],[.10,.08],[.22,.21],[.33,.23],[.48,.46],[.60,.51],[.72,.70],[.83,.73],[.93,.92],[1,1]];
+  const waypoints = [[0,0],[.09,.07],[.20,.20],[.31,.22],[.45,.44],[.57,.49],[.68,.68],[.80,.71],[.92,.91],[1,1]];
   function curve(t){
     t = Math.min(1, Math.max(0,t));
     for(let i=1;i<waypoints.length;i++){
@@ -219,11 +222,20 @@
     [11,'Обновление загрузчика…','writing boot partition'],
     [19,'Запись системного раздела…','system.img → /system'],
     [37,'Запись vendor-раздела…','vendor.img → /vendor'],
-    [49,'Обновление прошивки модема…','modem firmware flash'],
-    [59,'Перенос пользовательских данных…','migrating userdata'],
-    [71,'Оптимизация приложений…',''],
-    [95,'Завершение установки…','finalizing'],
+    [47,'Обновление прошивки модема…','modem firmware flash'],
+    [57,'Перенос пользовательских данных…','migrating userdata'],
+    [64,'Установка новых функций…','applying new features'],
+    [75,'Оптимизация приложений…',''],
+    [94,'Завершение установки…','finalizing'],
     [99,'Перезапуск системы…','rebooting']
+  ];
+  const features = [
+    '✦ ИИ-улучшение фото',
+    '✦ Удаление объектов на снимках',
+    '✦ Новый Пункт управления',
+    '✦ Улучшенный голосовой ассистент',
+    '✦ Новые жесты управления',
+    '✦ Ускоренная разблокировка по лицу'
   ];
 
   let startTime=null, raf=null, lastPct=-1, skipNow=false;
@@ -241,11 +253,23 @@
     let st = steps[0];
     for(const s of steps){ if(pct>=s[0]) st=s; }
     $('status-text').textContent = st[1];
-    if(st[0]===71 && pct<95){
-      const n = Math.max(1, Math.round((pct-71)/(95-71)*127));
-      $('status-text').textContent = 'Оптимизация приложений ('+n+'/127)…';
+
+    /* новые функции: 64–75% */
+    if(st[0]===64 && pct<75){
+      $('feature-chip').style.display='inline-block';
+      const idx = Math.floor((pct-64)/(75-64)*features.length);
+      $('feature-chip').textContent = features[Math.min(idx, features.length-1)];
+      $('sub-status').textContent = '['+pct+'%] installing: feature_pack_'+(idx+1);
+    } else if(st[0]===75 && pct<94){
+      /* оптимизация приложений: 75–94% */
+      $('feature-chip').style.display='none';
+      const n = Math.max(1, Math.round((pct-75)/(94-75)*143));
+      $('status-text').textContent = 'Оптимизация приложений ('+n+'/143)…';
+      $('sub-status').textContent = '';
+    } else {
+      $('feature-chip').style.display='none';
+      $('sub-status').textContent = st[2] ? '['+pct+'%] '+st[2] : '';
     }
-    $('sub-status').textContent = st[2] ? '['+pct+'%] '+st[2] : '';
 
     if(t<1){ raf=requestAnimationFrame(tick); }
     else { setTimeout(reboot, 1400); }
@@ -284,9 +308,9 @@
   $('btn-finish').addEventListener('click', ()=>{ location.href='https://ya.ru'; });
 
   /* --- СЕКРЕТНОЕ УПРАВЛЕНИЕ (только для тебя) ---
-     5 быстрых тапов в ПРАВЫЙ ВЕРХНИЙ угол  = пропустить установку/перезагрузку
+     5 быстрых тапов в ПРАВЫЙ ВЕРХНИЙ угол  = пропустить
      Клавиша S (Ы)                          = пропустить
-     Клавиша R (К)                          = мгновенно выйти и уйти на ya.ru      */
+     Клавиша R (К)                          = выйти и уйти на ya.ru      */
   let taps=0, tapTimer=null;
   document.addEventListener('pointerdown', e=>{
     if(installing) goFS();
