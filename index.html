@@ -10,348 +10,72 @@
   html,body { height:100%; background:#000; overflow:hidden; font-family:'Roboto','Segoe UI',-apple-system,sans-serif; color:#fff; }
   body { position:fixed; inset:0; }
 
-  .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-            opacity:0; pointer-events:none; transition:opacity .6s ease; background:#000; padding:24px; overflow:hidden;
-            touch-action:none; }
-  .screen.active { opacity:1; pointer-events:auto; }
+  .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center;
+            background:#000; padding:24px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+            padding-top:calc(40px + env(safe-area-inset-top)); padding-bottom:calc(40px + env(safe-area-inset-bottom)); }
 
-  /* ---------- ЭКРАН 1: проверка обновлений (ПРОКРУЧИВАЕТСЯ) ---------- */
-  #scr-check { justify-content:flex-start; padding-top:calc(40px + env(safe-area-inset-top));
-               padding-bottom:calc(40px + env(safe-area-inset-bottom));
-               overflow-y:auto; -webkit-overflow-scrolling:touch; touch-action:pan-y; overscroll-behavior:contain; }
-  .upd-header { font-size:15px; color:#8a8a8a; letter-spacing:.3px; margin-bottom:34px; }
-  .miui-logo-big { font-size:40px; font-weight:200; letter-spacing:6px; margin-bottom:6px; }
-  .miui-ver { font-size:13px; color:#777; margin-bottom:36px; letter-spacing:1px; }
-  .upd-card { width:min(92vw,420px); background:#111; border:1px solid #1e1e1e; border-radius:16px;
-              padding:20px; margin-bottom:14px; flex-shrink:0; }
-  .upd-card h2 { font-size:17px; font-weight:500; margin-bottom:4px; }
-  .upd-card .meta { font-size:13px; color:#8a8a8a; margin-bottom:14px; }
-  .upd-card ul { list-style:none; font-size:13.5px; color:#c9c9c9; line-height:1.85; }
-  .upd-card ul li::before { content:"• "; color:#ff6a00; }
+  .upd-header { font-size:15px; color:#8a8a8a; letter-spacing:.3px; margin-bottom:44px; }
 
-  /* тизер будущего HyperOS */
-  .teaser-card { width:min(92vw,420px); background:linear-gradient(135deg,#121216 0%,#18141f 100%);
-                 border:1px solid #2a2436; border-radius:16px; padding:16px 18px; margin-bottom:18px;
-                 display:flex; gap:14px; align-items:center; flex-shrink:0; }
-  .teaser-badge { background:#2a2436; color:#cbb8f0; font-size:10.5px; font-weight:700; letter-spacing:.8px;
-                  border-radius:6px; padding:4px 8px; margin-bottom:6px; display:inline-block; }
-  .teaser-card .t-title { font-size:15px; font-weight:500; }
-  .teaser-card p { font-size:12.5px; color:#9a94a8; line-height:1.5; margin-top:3px; }
+  .ok-circle { width:96px; height:96px; margin-bottom:30px; }
+  .ok-circle-bg { fill:none; stroke:#1f3b2c; stroke-width:3; }
+  .ok-circle-fg { fill:none; stroke:#3ddc84; stroke-width:3; stroke-linecap:round;
+                  stroke-dasharray:290; stroke-dashoffset:290; animation:draw 1s ease .2s forwards; }
+  .ok-mark { fill:none; stroke:#3ddc84; stroke-width:4.5; stroke-linecap:round; stroke-linejoin:round;
+             stroke-dasharray:60; stroke-dashoffset:60; animation:draw .5s ease 1s forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
 
-  .warn-box { width:min(92vw,420px); border:1px solid #4a4a4a; background:#151515; border-radius:14px;
-              padding:14px 16px; display:flex; gap:12px; align-items:flex-start; margin-bottom:28px; flex-shrink:0; }
-  .warn-box .ic { font-size:20px; line-height:1.2; color:#ffb400; }
-  .warn-box p { font-size:14px; line-height:1.55; color:#f0f0f0; }
-  .warn-box b { color:#fff; }
+  h1 { font-size:22px; font-weight:400; margin-bottom:8px; text-align:center; }
+  .version-line { font-size:14px; color:#3ddc84; margin-bottom:34px; letter-spacing:.3px; }
+
+  .info-card { width:min(92vw,420px); background:#111; border:1px solid #1e1e1e; border-radius:16px;
+               padding:20px; margin-bottom:16px; flex-shrink:0; }
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0;
+              font-size:14px; border-bottom:1px solid #1c1c1c; }
+  .info-row:last-child { border-bottom:none; padding-bottom:0; }
+  .info-row:first-child { padding-top:0; }
+  .info-row .k { color:#8a8a8a; }
+  .info-row .v { color:#e5e5e5; }
+  .info-row .v.green { color:#3ddc84; }
+
+  .note { width:min(92vw,420px); font-size:12.5px; color:#6d6d6d; text-align:center;
+          line-height:1.6; margin-bottom:34px; flex-shrink:0; }
+
   .btn { width:min(92vw,420px); padding:15px; border:none; border-radius:26px; background:#ff6a00; color:#fff;
          font-size:16px; font-weight:500; letter-spacing:.4px; cursor:pointer; transition:transform .1s, background .2s;
-         flex-shrink:0; }
+         flex-shrink:0; margin-top:auto; }
   .btn:active { transform:scale(.98); background:#e85f00; }
-  .foot-note { margin-top:16px; font-size:12px; color:#666; text-align:center; line-height:1.5; flex-shrink:0; }
-
-  /* ---------- ЭКРАН 2: установка ---------- */
-  #scr-install .brand { position:absolute; top:calc(26px + env(safe-area-inset-top)); left:26px; font-size:14px;
-                        font-weight:700; color:#5a5a5a; letter-spacing:1px; }
-  .robot-wrap { animation:breathe 3.2s ease-in-out infinite; margin-bottom:34px; }
-  @keyframes breathe { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-  .pct { font-size:62px; font-weight:200; letter-spacing:1px; margin-bottom:22px; font-variant-numeric:tabular-nums; }
-  .pct span { font-size:30px; font-weight:200; color:#bbb; }
-  .bar-wrap { width:min(78vw,460px); margin-bottom:20px; }
-  .status { font-size:14.5px; color:#d5d5d5; min-height:22px; text-align:center; }
-  .feature-chip { display:none; margin-top:14px; font-size:12.5px; color:#ff9d4d; background:#1c130a;
-                  border:1px solid #3a2a18; border-radius:20px; padding:6px 14px; letter-spacing:.3px; }
-  .sub-status { font-size:12px; color:#777; margin-top:10px; font-family:'Courier New',monospace; min-height:16px; }
-  .install-warn { position:absolute; bottom:calc(26px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%);
-                  width:min(90vw,440px); background:#141414; border:1px solid #333; border-radius:12px;
-                  padding:12px 14px; font-size:13px; color:#e8e8e8; text-align:center; line-height:1.5; }
-  .install-warn b { color:#ffb400; }
-
-  /* ---------- ЭКРАН 3: перезагрузка ---------- */
-  #scr-boot { background:#000; }
-  .boot-logo { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-               opacity:0; transition:opacity 1s ease; }
-  .boot-logo.on { opacity:1; }
-  .redmi-logo { font-size:44px; font-weight:700; letter-spacing:3px; color:#fff; animation:bootglow 2.4s ease-in-out infinite; }
-  .miui-logo-boot { font-size:38px; font-weight:200; letter-spacing:8px; color:#fff; animation:bootglow 2.4s ease-in-out infinite; }
-  @keyframes bootglow { 0%,100%{opacity:.75; text-shadow:0 0 12px rgba(255,255,255,.15)} 50%{opacity:1; text-shadow:0 0 26px rgba(255,255,255,.45)} }
-  .boot-sub { position:absolute; bottom:calc(56px + env(safe-area-inset-bottom)); font-size:12.5px; color:#6a6a6a; letter-spacing:.5px; }
-  .dots span { display:inline-block; width:6px; height:6px; margin:0 4px; border-radius:50%; background:#666; animation:dotp 1.2s infinite; }
-  .dots span:nth-child(2){animation-delay:.2s} .dots span:nth-child(3){animation-delay:.4s}
-  @keyframes dotp { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
-
-  /* ---------- ЭКРАН 4: завершено ---------- */
-  .check-svg { margin-bottom:28px; }
-  .check-circle { stroke:#3ddc84; stroke-width:3; fill:none; stroke-dasharray:290; stroke-dashoffset:290; }
-  .check-mark { stroke:#3ddc84; stroke-width:4; fill:none; stroke-linecap:round; stroke-linejoin:round;
-                stroke-dasharray:60; stroke-dashoffset:60; }
-  #scr-done.active .check-circle { animation:draw 1s ease forwards; }
-  #scr-done.active .check-mark { animation:draw .5s ease .8s forwards; }
-  @keyframes draw { to { stroke-dashoffset:0; } }
-  #scr-done h1 { font-size:24px; font-weight:400; margin-bottom:10px; }
-  #scr-done .ver { font-size:13px; color:#8a8a8a; margin-bottom:40px; text-align:center; line-height:1.6; }
-
-  /* ---------- Оверлей фуллскрина ---------- */
-  #fs-overlay { position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center;
-                z-index:99; text-align:center; padding:30px; }
-  #fs-overlay p { font-size:15px; color:#ddd; line-height:1.6; }
 </style>
 </head>
 <body>
 
-<!-- ЭКРАН 1 -->
-<div class="screen active" id="scr-check">
+<div class="screen">
   <div class="upd-header">Обновление&nbsp;•&nbsp;Redmi</div>
-  <div class="miui-logo-big">MIUI</div>
-  <div class="miui-ver">текущая версия: 14.0.4.0.TMHRUXM</div>
 
-  <div class="upd-card">
-    <h2>Доступно обновление до MIUI 15.0.2.0</h2>
-    <div class="meta">2,8 ГБ&nbsp;&nbsp;|&nbsp;&nbsp;Патч безопасности: сентябрь 2026</div>
-    <ul>
-      <li>Обновлены системные приложения и иконки</li>
-      <li>Улучшена плавность анимаций интерфейса</li>
-      <li>Оптимизирован расход батареи</li>
-      <li>Повышена стабильность системы</li>
-      <li>Обновлены патчи безопасности Android</li>
-    </ul>
-  </div>
-
-  <div class="teaser-card">
-    <svg width="38" height="38" viewBox="0 0 40 40" style="flex-shrink:0">
-      <rect x="1" y="1" width="38" height="38" rx="10" fill="#211b30" stroke="#3a2f52" stroke-width="1.5"/>
-      <circle cx="20" cy="20" r="7" fill="none" stroke="#cbb8f0" stroke-width="2"/>
-      <circle cx="20" cy="20" r="2.4" fill="#cbb8f0"/>
-    </svg>
-    <div>
-      <span class="teaser-badge">СКОРО</span>
-      <div class="t-title">Подготовка к Xiaomi HyperOS</div>
-      <p>Следующее крупное обновление будет доступно для этого устройства. Данная версия готовит систему к переходу.</p>
-    </div>
-  </div>
-
-  <div class="warn-box">
-    <div class="ic">⚠</div>
-    <p><b>Во время обновления телефоном нельзя пользоваться.</b><br>
-       Не выключайте и не перезагружайте устройство до завершения установки.
-       Заряд батареи должен быть не менее 30%.</p>
-  </div>
-
-  <button class="btn" id="btn-update">Обновить</button>
-  <div class="foot-note">Рекомендуется подключение к Wi-Fi.<br>Установка займёт около 15 минут.</div>
-</div>
-
-<!-- ЭКРАН 2 -->
-<div class="screen" id="scr-install">
-  <div class="brand">Redmi</div>
-  <div class="robot-wrap">
-    <svg width="128" height="104" viewBox="0 0 200 165">
-      <line x1="77" y1="24" x2="87" y2="42" stroke="#3ddc84" stroke-width="6" stroke-linecap="round"/>
-      <line x1="123" y1="24" x2="113" y2="42" stroke="#3ddc84" stroke-width="6" stroke-linecap="round"/>
-      <path d="M66,62 A34,34 0 0 1 134,62 Z" fill="#3ddc84"/>
-      <circle cx="88" cy="50" r="3.6" fill="#000"/><circle cx="112" cy="50" r="3.6" fill="#000"/>
-      <rect x="44" y="68" width="15" height="50" rx="7.5" fill="#3ddc84"/>
-      <rect x="141" y="68" width="15" height="50" rx="7.5" fill="#3ddc84"/>
-      <rect x="66" y="68" width="68" height="60" rx="7" fill="#3ddc84"/>
-      <rect x="80" y="132" width="15" height="30" rx="7.5" fill="#3ddc84"/>
-      <rect x="105" y="132" width="15" height="30" rx="7.5" fill="#3ddc84"/>
-    </svg>
-  </div>
-  <div class="pct"><span id="pct-num">0</span><span>%</span></div>
-  <div class="bar-wrap">
-    <svg width="100%" height="6" viewBox="0 0 600 6" preserveAspectRatio="none">
-      <rect x="0" y="0" width="600" height="6" rx="3" fill="#232323"/>
-      <rect id="bar-fill" x="0" y="0" width="0" height="6" rx="3" fill="#ff6a00"/>
-    </svg>
-  </div>
-  <div class="status" id="status-text">Установка обновления системы…</div>
-  <div class="feature-chip" id="feature-chip"></div>
-  <div class="sub-status" id="sub-status"></div>
-  <div class="install-warn"><b>⚠ Не выключайте устройство.</b><br>Телефоном нельзя пользоваться до завершения обновления.</div>
-</div>
-
-<!-- ЭКРАН 3 -->
-<div class="screen" id="scr-boot">
-  <div class="boot-logo" id="boot-redmi"><div class="redmi-logo">Redmi</div></div>
-  <div class="boot-logo" id="boot-miui">
-    <div class="miui-logo-boot">MIUI</div>
-    <div class="dots" style="margin-top:28px"><span></span><span></span><span></span></div>
-  </div>
-  <div class="boot-sub">Выполняется обновление системы…</div>
-</div>
-
-<!-- ЭКРАН 4 -->
-<div class="screen" id="scr-done">
-  <svg class="check-svg" width="110" height="110" viewBox="0 0 100 100">
-    <circle class="check-circle" cx="50" cy="50" r="46"/>
-    <path class="check-mark" d="M30 52 L44 66 L71 37"/>
+  <svg class="ok-circle" viewBox="0 0 100 100">
+    <circle class="ok-circle-bg" cx="50" cy="50" r="46"/>
+    <circle class="ok-circle-fg" cx="50" cy="50" r="46"/>
+    <path class="ok-mark" d="M30 52 L44 66 L71 37"/>
   </svg>
-  <h1>Обновление завершено</h1>
-  <div class="ver">MIUI 15.0.2.0.TMHRUXM • установлено успешно<br>Все данные сохранены</div>
-  <button class="btn" id="btn-finish">Завершить</button>
-</div>
 
-<div id="fs-overlay"><p>Нажмите на экран,<br>чтобы продолжить установку обновления</p></div>
+  <h1>Установлена последняя версия</h1>
+  <div class="version-line">MIUI 15.0.2.0.TMHRUXM</div>
+
+  <div class="info-card">
+    <div class="info-row"><span class="k">Состояние</span><span class="v green">Актуальная</span></div>
+    <div class="info-row"><span class="k">Последняя проверка</span><span class="v">Сегодня</span></div>
+    <div class="info-row"><span class="k">Патч безопасности</span><span class="v">сентябрь 2026</span></div>
+    <div class="info-row"><span class="k">Устройство</span><span class="v">Redmi</span></div>
+  </div>
+
+  <div class="note">Новые обновления устанавливаются автоматически, как только они становятся доступны для этого устройства.</div>
+
+  <button class="btn" id="btn-ok">Хорошо</button>
+</div>
 
 <script>
-(function(){
-  const DURATION = 7 * 60 * 1000;   // ← 7 минут
-  const $ = id => document.getElementById(id);
-
-  function show(id){
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    $(id).classList.add('active');
-  }
-
-  /* --- фуллскрин + не гасить экран --- */
-  function goFS(){
-    const el = document.documentElement;
-    if(!document.fullscreenElement){
-      (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el,{navigationUI:'hide'});
-    }
-  }
-  let wakeLock = null;
-  async function keepAwake(){
-    try{ wakeLock = await navigator.wakeLock.request('screen'); }catch(e){}
-  }
-  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') keepAwake(); });
-
-  /* --- «агрессивный» фуллскрин --- */
-  let installing = false;
-  document.addEventListener('fullscreenchange', ()=>{
-    $('fs-overlay').style.display = (!document.fullscreenElement && installing) ? 'flex' : 'none';
+  document.getElementById('btn-ok').addEventListener('click', function(){
+    location.href = 'https://ya.ru';
   });
-  $('fs-overlay').addEventListener('pointerdown', e=>{ e.stopPropagation(); goFS(); $('fs-overlay').style.display='none'; });
-
-  /* --- блокировка кнопки «назад» --- */
-  history.pushState(null,'',location.href);
-  window.addEventListener('popstate', ()=>history.pushState(null,'',location.href));
-  window.addEventListener('beforeunload', e=>{ if(installing){ e.preventDefault(); e.returnValue=''; } });
-
-  /* --- прогресс с реалистичными «залипаниями» --- */
-  const waypoints = [[0,0],[.09,.07],[.20,.20],[.31,.22],[.45,.44],[.57,.49],[.68,.68],[.80,.71],[.92,.91],[1,1]];
-  function curve(t){
-    t = Math.min(1, Math.max(0,t));
-    for(let i=1;i<waypoints.length;i++){
-      if(t<=waypoints[i][0]){
-        const [t0,p0]=waypoints[i-1],[t1,p1]=waypoints[i];
-        return p0+(p1-p0)*((t-t0)/(t1-t0));
-      }
-    }
-    return 1;
-  }
-  const steps = [
-    [0,'Проверка пакета обновления…','verifying update.zip'],
-    [5,'Распаковка пакета…','extracting payload.bin'],
-    [11,'Обновление загрузчика…','writing boot partition'],
-    [19,'Запись системного раздела…','system.img → /system'],
-    [37,'Запись vendor-раздела…','vendor.img → /vendor'],
-    [47,'Обновление прошивки модема…','modem firmware flash'],
-    [57,'Перенос пользовательских данных…','migrating userdata'],
-    [64,'Установка системных компонентов…','applying system packages'],
-    [75,'Оптимизация приложений…',''],
-    [94,'Завершение установки…','finalizing'],
-    [99,'Перезапуск системы…','rebooting']
-  ];
-  /* скромные, «обычные» пункты для MIUI 15 */
-  const features = [
-    '✦ Обновление системных иконок',
-    '✦ Улучшение анимаций',
-    '✦ Оптимизация батареи',
-    '✦ Обновление приложения «Погода»',
-    '✦ Обновление патчей безопасности',
-    '✦ Подготовка к переходу на HyperOS'
-  ];
-
-  let startTime=null, raf=null, lastPct=-1, skipNow=false;
-
-  function tick(){
-    const elapsed = skipNow ? DURATION : (Date.now()-startTime);
-    const t = Math.min(1, elapsed/DURATION);
-    let pct = Math.floor(curve(t)*100);
-    if(pct<lastPct) pct=lastPct;
-    lastPct=pct;
-
-    $('pct-num').textContent = pct;
-    $('bar-fill').setAttribute('width', (600*pct/100).toFixed(1));
-
-    let st = steps[0];
-    for(const s of steps){ if(pct>=s[0]) st=s; }
-    $('status-text').textContent = st[1];
-
-    /* системные компоненты: 64–75% */
-    if(st[0]===64 && pct<75){
-      $('feature-chip').style.display='inline-block';
-      const idx = Math.floor((pct-64)/(75-64)*features.length);
-      $('feature-chip').textContent = features[Math.min(idx, features.length-1)];
-      $('sub-status').textContent = '['+pct+'%] installing: package_'+(idx+1);
-    } else if(st[0]===75 && pct<94){
-      /* оптимизация приложений: 75–94% */
-      $('feature-chip').style.display='none';
-      const n = Math.max(1, Math.round((pct-75)/(94-75)*143));
-      $('status-text').textContent = 'Оптимизация приложений ('+n+'/143)…';
-      $('sub-status').textContent = '';
-    } else {
-      $('feature-chip').style.display='none';
-      $('sub-status').textContent = st[2] ? '['+pct+'%] '+st[2] : '';
-    }
-
-    if(t<1){ raf=requestAnimationFrame(tick); }
-    else { setTimeout(reboot, 1400); }
-  }
-
-  function startInstall(){
-    installing = true;
-    show('scr-install');
-    startTime = Date.now();
-    lastPct = -1; skipNow = false;
-    raf = requestAnimationFrame(tick);
-  }
-
-  function reboot(){
-    installing = false;
-    cancelAnimationFrame(raf);
-    $('fs-overlay').style.display='none';
-    if(navigator.vibrate) navigator.vibrate(120);
-    show('scr-boot');
-    $('boot-redmi').classList.add('on');
-    setTimeout(()=>{
-      $('boot-redmi').classList.remove('on');
-      setTimeout(()=>{ $('boot-miui').classList.add('on'); }, 900);
-    }, 3200);
-    setTimeout(()=>{
-      $('boot-miui').classList.remove('on');
-      setTimeout(()=>{
-        show('scr-done');
-        if(navigator.vibrate) navigator.vibrate(80);
-      }, 900);
-    }, 7200);
-  }
-
-  /* --- кнопки --- */
-  $('btn-update').addEventListener('click', async ()=>{ goFS(); await keepAwake(); startInstall(); });
-  $('btn-finish').addEventListener('click', ()=>{ location.href='https://ya.ru'; });
-
-  /* --- СЕКРЕТНОЕ УПРАВЛЕНИЕ (только для тебя) ---
-     5 быстрых тапов в ПРАВЫЙ ВЕРХНИЙ угол  = пропустить
-     Клавиша S (Ы)                          = пропустить
-     Клавиша R (К)                          = выйти и уйти на ya.ru      */
-  let taps=0, tapTimer=null;
-  document.addEventListener('pointerdown', e=>{
-    if(installing) goFS();
-    if(e.clientX > innerWidth-70 && e.clientY < 70){
-      taps++; clearTimeout(tapTimer); tapTimer=setTimeout(()=>taps=0, 2500);
-      if(taps>=5){ taps=0; secretSkip(); }
-    }
-  }, true);
-  document.addEventListener('keydown', e=>{
-    if(e.code==='KeyS') secretSkip();
-    if(e.code==='KeyR'){ installing=false; location.href='https://ya.ru'; }
-  });
-  function secretSkip(){
-    if(installing){ skipNow=true; startTime = Date.now()-DURATION; }
-    else if($('scr-boot').classList.contains('active')){ show('scr-done'); }
-  }
-})();
 </script>
 </body>
 </html>
