@@ -15,13 +15,15 @@
             touch-action:none; }
   .screen.active { opacity:1; pointer-events:auto; }
 
-  /* ---------- ЭКРАН 1: проверка обновлений (ПРОКРУЧИВАЕТСЯ) ---------- */
+  /* ---------- ЭКРАН 1: проверка обновлений ---------- */
   #scr-check { justify-content:flex-start; padding-top:calc(40px + env(safe-area-inset-top));
                padding-bottom:calc(40px + env(safe-area-inset-bottom));
                overflow-y:auto; -webkit-overflow-scrolling:touch; touch-action:pan-y; overscroll-behavior:contain; }
   .upd-header { font-size:15px; color:#8a8a8a; letter-spacing:.3px; margin-bottom:34px; }
-  .hyper-logo-big { font-size:34px; font-weight:300; letter-spacing:1px; margin-bottom:4px; }
-  .hyper-logo-big b { font-weight:600; }
+  .hyper-mark { filter:drop-shadow(0 0 16px rgba(138,99,255,.4)); }
+  .hyper-logo-big { font-size:32px; font-weight:300; letter-spacing:.5px; margin:16px 0 4px; }
+  .hyper-logo-big b { font-weight:600; background:linear-gradient(90deg,#a98bff,#7452e6);
+                      -webkit-background-clip:text; background-clip:text; color:transparent; }
   .miui-ver { font-size:13px; color:#777; margin-bottom:36px; letter-spacing:1px; }
   .upd-card { width:min(92vw,420px); background:#111; border:1px solid #1e1e1e; border-radius:16px;
               padding:20px; margin-bottom:18px; flex-shrink:0; }
@@ -44,43 +46,69 @@
   #scr-install .brand { position:absolute; top:calc(26px + env(safe-area-inset-top)); left:26px; font-size:14px;
                         font-weight:600; color:#5a5a5a; letter-spacing:.5px; }
   .robot-wrap { animation:breathe 3.2s ease-in-out infinite; margin-bottom:34px; }
+  .robot-wrap.small { margin-bottom:22px; }
   @keyframes breathe { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
   .pct { font-size:62px; font-weight:200; letter-spacing:1px; margin-bottom:22px; font-variant-numeric:tabular-nums; }
   .pct span { font-size:30px; font-weight:200; color:#bbb; }
   .bar-wrap { width:min(78vw,460px); margin-bottom:20px; }
   .status { font-size:14.5px; color:#d5d5d5; min-height:22px; text-align:center; }
-  .feature-chip { display:none; margin-top:14px; font-size:12.5px; color:#ff9d4d; background:#1c130a;
-                  border:1px solid #3a2a18; border-radius:20px; padding:6px 14px; letter-spacing:.3px; }
   .sub-status { font-size:12px; color:#777; margin-top:10px; font-family:'Courier New',monospace; min-height:16px; }
   .install-warn { position:absolute; bottom:calc(26px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%);
                   width:min(90vw,440px); background:#141414; border:1px solid #333; border-radius:12px;
                   padding:12px 14px; font-size:13px; color:#e8e8e8; text-align:center; line-height:1.5; }
   .install-warn b { color:#ffb400; }
 
-  /* ---------- ЭКРАН 3: загрузка HyperOS (30 сек) ---------- */
+  /* ---------- ЭКРАН 3: критическая ошибка ---------- */
+  #scr-error { background:#000; }
+  #scr-error::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:#ff3b30; }
+  .err-robot { margin-bottom:20px; animation:errflicker 2.8s ease-in-out infinite; }
+  @keyframes errflicker { 0%,100%{opacity:.9} 50%{opacity:1} }
+  .err-title { font-size:22px; font-weight:500; color:#ff4d42; margin-bottom:8px; letter-spacing:.3px; }
+  .err-code { font-size:13px; color:#a06058; font-family:'Courier New',monospace; margin-bottom:20px; letter-spacing:.4px; }
+  .err-card { width:min(92vw,420px); background:#160a09; border:1px solid #4a1a15; border-radius:14px;
+              padding:16px; margin-bottom:14px; }
+  .err-card p { font-size:14px; line-height:1.6; color:#f0d5d2; }
+  .err-card b { color:#ff8f87; }
+  .err-log { width:min(92vw,420px); background:#0c0605; border:1px solid #2a100c; border-radius:10px;
+             padding:12px 14px; font-family:'Courier New',monospace; font-size:11.5px; line-height:1.75;
+             color:#c46a5e; margin-bottom:16px; overflow:hidden; }
+  .err-log .ln-ok { color:#6f6f6f; }
+  .err-log .ln-fail { color:#ff5d52; }
+  .err-log .ln-crit { color:#ff8f87; font-weight:700; }
+  .err-storage { width:min(92vw,420px); margin-bottom:20px; }
+  .err-storage .lbl { display:flex; justify-content:space-between; font-size:12px; color:#9a8f8e; margin-bottom:6px; }
+  .err-storage .track { height:6px; background:#232323; border-radius:3px; overflow:hidden; }
+  .err-storage .fill { height:100%; width:97.5%; background:linear-gradient(90deg,#ff3b30,#ff6a00); border-radius:3px; }
+  .err-countdown { font-size:14px; color:#c9c9c9; }
+  .err-countdown b { color:#fff; font-variant-numeric:tabular-nums; }
+
+  /* ---------- ЭКРАН 4: перезагрузка ---------- */
   #scr-boot { background:#000; }
   .boot-wrap { display:flex; flex-direction:column; align-items:center; opacity:0; transition:opacity 1.2s ease; }
   .boot-wrap.on { opacity:1; }
-  .orbit-box { position:relative; width:120px; height:120px; margin-bottom:36px; display:flex; align-items:center; justify-content:center; }
-  .orbit-ring { position:absolute; inset:0; animation:spin 2.6s linear infinite; }
-  .orbit-ring circle { fill:none; stroke-width:3; stroke-linecap:round; }
-  .orbit-ring .bg { stroke:#1c1c1c; }
-  .orbit-ring .fg { stroke:url(#gradHyper); stroke-dasharray:70 230; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .orbit-core { width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 35%,#ffd9b0,#ff6a00);
-                box-shadow:0 0 22px rgba(255,106,0,.8); animation:corepulse 2.2s ease-in-out infinite; }
-  @keyframes corepulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.28)} }
+  .boot-mark { margin-bottom:30px; animation:markglow 2.8s ease-in-out infinite; }
+  @keyframes markglow {
+    0%,100%{ filter:drop-shadow(0 0 12px rgba(138,99,255,.35)); }
+    50%    { filter:drop-shadow(0 0 30px rgba(138,99,255,.75)); }
+  }
   .boot-brand { font-size:14px; color:#8a8a8a; letter-spacing:2px; margin-bottom:6px; }
   .boot-os { font-size:34px; font-weight:300; letter-spacing:1px; animation:bootglow 2.6s ease-in-out infinite; }
-  .boot-os b { font-weight:600; }
-  @keyframes bootglow { 0%,100%{opacity:.8; text-shadow:0 0 14px rgba(255,255,255,.12)} 50%{opacity:1; text-shadow:0 0 28px rgba(255,255,255,.4)} }
+  .boot-os b { font-weight:600; background:linear-gradient(90deg,#b39aff,#7452e6);
+               -webkit-background-clip:text; background-clip:text; color:transparent; }
+  @keyframes bootglow { 0%,100%{opacity:.8} 50%{opacity:1} }
   .boot-sub { position:absolute; bottom:calc(58px + env(safe-area-inset-bottom)); left:0; right:0; text-align:center;
               font-size:12.5px; color:#6a6a6a; letter-spacing:.5px; }
-  .dots span { display:inline-block; width:6px; height:6px; margin:0 4px; border-radius:50%; background:#666; animation:dotp 1.2s infinite; }
+  .dots span { display:inline-block; width:6px; height:6px; margin:0 4px; border-radius:50%; background:#8b7bb0; animation:dotp 1.2s infinite; }
   .dots span:nth-child(2){animation-delay:.2s} .dots span:nth-child(3){animation-delay:.4s}
   @keyframes dotp { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
 
-  /* ---------- ЭКРАН 4: завершено ---------- */
+  /* ---------- ЭКРАН 5: откат ---------- */
+  #scr-rollback .brand { position:absolute; top:calc(26px + env(safe-area-inset-top)); left:26px; font-size:14px;
+                         font-weight:600; color:#5a5a5a; letter-spacing:.5px; }
+  .rb-title { font-size:16px; color:#e0e0e0; margin-bottom:24px; text-align:center; line-height:1.5; }
+  .rb-title b { color:#fff; }
+
+  /* ---------- ЭКРАН 6: завершено ---------- */
   .check-svg { margin-bottom:24px; }
   .check-circle { stroke:#3ddc84; stroke-width:3; fill:none; stroke-dasharray:290; stroke-dashoffset:290; }
   .check-mark { stroke:#3ddc84; stroke-width:4; fill:none; stroke-linecap:round; stroke-linejoin:round;
@@ -88,15 +116,14 @@
   #scr-done.active .check-circle { animation:draw 1s ease forwards; }
   #scr-done.active .check-mark { animation:draw .5s ease .8s forwards; }
   @keyframes draw { to { stroke-dashoffset:0; } }
-  #scr-done h1 { font-size:24px; font-weight:400; margin-bottom:8px; }
+  #scr-done h1 { font-size:23px; font-weight:400; margin-bottom:8px; text-align:center; }
   #scr-done .ver { font-size:13px; color:#8a8a8a; margin-bottom:24px; text-align:center; line-height:1.6; }
-  .err-card { width:min(92vw,420px); background:#1a1207; border:1px solid #4a3512; border-radius:14px;
-              padding:14px 16px; display:flex; gap:12px; align-items:flex-start; margin-bottom:30px; }
-  .err-card .ic { font-size:20px; line-height:1.2; color:#ffb400; }
-  .err-card p { font-size:13.5px; line-height:1.55; color:#e8dcc0; }
-  .err-card b { color:#ffcf7a; }
+  .advice-card { width:min(92vw,420px); background:#151515; border:1px solid #333; border-radius:14px;
+                 padding:16px; margin-bottom:30px; display:flex; gap:12px; align-items:flex-start; }
+  .advice-card .ic { font-size:19px; line-height:1.25; color:#ffb400; }
+  .advice-card p { font-size:13.5px; line-height:1.6; color:#dcdcdc; }
+  .advice-card b { color:#fff; }
 
-  /* ---------- Оверлей фуллскрина ---------- */
   #fs-overlay { position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center;
                 z-index:99; text-align:center; padding:30px; }
   #fs-overlay p { font-size:15px; color:#ddd; line-height:1.6; }
@@ -107,18 +134,30 @@
 <!-- ЭКРАН 1 -->
 <div class="screen active" id="scr-check">
   <div class="upd-header">Обновление • Redmi</div>
+
+  <svg class="hyper-mark" width="60" height="60" viewBox="0 0 100 100">
+    <defs>
+      <linearGradient id="gHyperA" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#b39aff"/><stop offset="100%" stop-color="#5b3cc4"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="50" cy="52" rx="45" ry="15" fill="none" stroke="url(#gHyperA)" stroke-width="4.5"
+             transform="rotate(-16 50 52)" opacity=".85"/>
+    <circle cx="50" cy="50" r="31" fill="url(#gHyperA)"/>
+    <circle cx="41" cy="41" r="10" fill="#ffffff" opacity=".14"/>
+  </svg>
+
   <div class="hyper-logo-big">Xiaomi <b>HyperOS</b></div>
-  <div class="miui-ver">текущая версия: MIUI 15.0.2.0.TMHRUXM</div>
+  <div class="miui-ver">текущая версия: 1.0.2.0.UNWRUXM</div>
 
   <div class="upd-card">
-    <h2>Доступно обновление до Xiaomi HyperOS 1.0</h2>
-    <div class="meta">4,2 ГБ&nbsp;&nbsp;|&nbsp;&nbsp;Патч безопасности: сентябрь 2026</div>
+    <h2>Доступно обновление до Xiaomi HyperOS 2.0</h2>
+    <div class="meta">5,6 ГБ&nbsp;&nbsp;|&nbsp;&nbsp;Патч безопасности: сентябрь 2026</div>
     <ul>
-      <li>Полностью новая система Xiaomi HyperOS</li>
-      <li>Интеграция «Человек × Машина × Дом»</li>
-      <li>Новый дизайн интерфейса и анимаций</li>
-      <li>ИИ-функции: обработка фото и текста</li>
-      <li>Xiaomi HyperConnect: связь устройств экосистемы</li>
+      <li>Новая версия системы Xiaomi HyperOS 2.0</li>
+      <li>ИИ-функции нового поколения</li>
+      <li>Переработанный интерфейс и анимации</li>
+      <li>Улучшена работа с устройствами экосистемы</li>
       <li>Повышена производительность и автономность</li>
     </ul>
   </div>
@@ -126,8 +165,8 @@
   <div class="warn-box">
     <div class="ic">⚠</div>
     <p><b>Во время обновления телефоном нельзя пользоваться.</b><br>
-       Не выключайте и не перезагружайте устройство до завершения установки.
-       Заряд батареи должен быть не менее 50%.</p>
+       Не выключайте устройство до завершения установки.
+       Рекомендуется освободить не менее 8 ГБ памяти.</p>
   </div>
 
   <button class="btn" id="btn-update">Обновить</button>
@@ -157,91 +196,283 @@
       <rect id="bar-fill" x="0" y="0" width="0" height="6" rx="3" fill="#ff6a00"/>
     </svg>
   </div>
-  <div class="status" id="status-text">Установка Xiaomi HyperOS…</div>
-  <div class="feature-chip" id="feature-chip"></div>
+  <div class="status" id="status-text">Установка Xiaomi HyperOS 2.0…</div>
   <div class="sub-status" id="sub-status"></div>
   <div class="install-warn"><b>⚠ Не выключайте устройство.</b><br>Телефоном нельзя пользоваться до завершения обновления.</div>
 </div>
 
-<!-- ЭКРАН 3: загрузка HyperOS -->
+<!-- ЭКРАН 3: ошибка -->
+<div class="screen" id="scr-error">
+  <div class="err-robot">
+    <svg width="150" height="110" viewBox="0 0 200 150">
+      <g transform="rotate(-90 100 82)">
+        <line x1="77" y1="24" x2="87" y2="42" stroke="#8a8a8a" stroke-width="6" stroke-linecap="round"/>
+        <line x1="123" y1="24" x2="113" y2="42" stroke="#8a8a8a" stroke-width="6" stroke-linecap="round"/>
+        <path d="M66,62 A34,34 0 0 1 134,62 Z" fill="#8a8a8a"/>
+        <circle cx="88" cy="50" r="3.6" fill="#000"/><circle cx="112" cy="50" r="3.6" fill="#000"/>
+        <rect x="44" y="68" width="15" height="50" rx="7.5" fill="#8a8a8a"/>
+        <rect x="141" y="68" width="15" height="50" rx="7.5" fill="#8a8a8a"/>
+        <rect x="66" y="68" width="68" height="60" rx="7" fill="#8a8a8a"/>
+        <rect x="80" y="132" width="15" height="30" rx="7.5" fill="#8a8a8a"/>
+        <rect x="105" y="132" width="15" height="30" rx="7.5" fill="#8a8a8a"/>
+      </g>
+      <rect x="93" y="18" width="14" height="44" rx="7" fill="#ff3b30"/>
+      <circle cx="100" cy="76" r="7" fill="#ff3b30"/>
+    </svg>
+  </div>
+  <div class="err-title">Критическая ошибка</div>
+  <div class="err-code">Fatal error: not enough storage space&nbsp;&nbsp;(0x000001C4)</div>
+
+  <div class="err-card">
+    <p>Не удалось установить обновление <b>Xiaomi HyperOS 2.0</b>.
+       На устройстве <b>недостаточно свободного места</b>.
+       Система будет автоматически перезапущена для удаления обновления
+       и возврата устройства в исходное состояние.</p>
+  </div>
+
+  <div class="err-log">
+    <div class="ln-ok">[00:14:02] updater: verifying package... OK</div>
+    <div class="ln-ok">[00:23:47] updater: writing /system... 47%</div>
+    <div class="ln-fail">[00:31:12] updater: write failed: ENOSPC (no space left)</div>
+    <div class="ln-fail">[00:31:12] updater: rollback marker set</div>
+    <div class="ln-crit">[00:31:13] FATAL: STORAGE_INSUFFICIENT (0x000001C4)</div>
+  </div>
+
+  <div class="err-storage">
+    <div class="lbl"><span>Хранилище устройства</span><span>31,2 из 32 ГБ занято</span></div>
+    <div class="track"><div class="fill"></div></div>
+  </div>
+
+  <div class="err-countdown">Автоматическая перезагрузка через <b><span id="err-count">30</span> с</b></div>
+</div>
+
+<!-- ЭКРАН 4: перезагрузка (используется дважды) -->
 <div class="screen" id="scr-boot">
   <div class="boot-wrap" id="boot-wrap">
-    <div class="orbit-box">
-      <svg class="orbit-ring" viewBox="0 0 120 120">
-        <defs>
-          <linearGradient id="gradHyper" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ff6a00"/>
-            <stop offset="100%" stop-color="#ff2d78"/>
-          </linearGradient>
-        </defs>
-        <circle class="bg" cx="60" cy="60" r="54"/>
-        <circle class="fg" cx="60" cy="60" r="54"/>
-      </svg>
-      <div class="orbit-core"></div>
-    </div>
+    <svg class="boot-mark" width="92" height="92" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="gHyperB" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#b39aff"/><stop offset="100%" stop-color="#5b3cc4"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="50" cy="52" rx="45" ry="15" fill="none" stroke="url(#gHyperB)" stroke-width="4.5"
+               transform="rotate(-16 50 52)" opacity=".85"/>
+      <circle cx="50" cy="50" r="31" fill="url(#gHyperB)"/>
+      <circle cx="41" cy="41" r="10" fill="#ffffff" opacity=".14"/>
+    </svg>
     <div class="boot-brand">Xiaomi</div>
     <div class="boot-os"><b>Hyper</b>OS</div>
   </div>
-  <div class="boot-sub">Настройка системы…<br><div class="dots" style="margin-top:10px"><span></span><span></span><span></span></div></div>
+  <div class="boot-sub"><span id="boot-sub-text">Перезапуск системы…</span><br><div class="dots" style="margin-top:10px"><span></span><span></span><span></span></div></div>
 </div>
 
-<!-- ЭКРАН 4 -->
+<!-- ЭКРАН 5: откат -->
+<div class="screen" id="scr-rollback">
+  <div class="brand">Xiaomi HyperOS</div>
+  <div class="robot-wrap small">
+    <svg width="110" height="90" viewBox="0 0 200 165">
+      <line x1="77" y1="24" x2="87" y2="42" stroke="#3ddc84" stroke-width="6" stroke-linecap="round"/>
+      <line x1="123" y1="24" x2="113" y2="42" stroke="#3ddc84" stroke-width="6" stroke-linecap="round"/>
+      <path d="M66,62 A34,34 0 0 1 134,62 Z" fill="#3ddc84"/>
+      <circle cx="88" cy="50" r="3.6" fill="#000"/><circle cx="112" cy="50" r="3.6" fill="#000"/>
+      <rect x="44" y="68" width="15" height="50" rx="7.5" fill="#3ddc84"/>
+      <rect x="141" y="68" width="15" height="50" rx="7.5" fill="#3ddc84"/>
+      <rect x="66" y="68" width="68" height="60" rx="7" fill="#3ddc84"/>
+      <rect x="80" y="132" width="15" height="30" rx="7.5" fill="#3ddc84"/>
+      <rect x="105" y="132" width="15" height="30" rx="7.5" fill="#3ddc84"/>
+    </svg>
+  </div>
+  <div class="rb-title">Удаление обновления <b>HyperOS 2.0</b>…<br>Возврат устройства в исходное состояние</div>
+  <div class="pct"><span id="rb-pct">0</span><span>%</span></div>
+  <div class="bar-wrap">
+    <svg width="100%" height="6" viewBox="0 0 600 6" preserveAspectRatio="none">
+      <rect x="0" y="0" width="600" height="6" rx="3" fill="#232323"/>
+      <rect id="rb-fill" x="0" y="0" width="0" height="6" rx="3" fill="#ff6a00"/>
+    </svg>
+  </div>
+  <div class="status" id="rb-status">Подготовка к откату…</div>
+  <div class="sub-status" id="rb-sub"></div>
+  <div class="install-warn"><b>⚠ Не выключайте устройство.</b><br>Идёт восстановление системы. Это может занять время.</div>
+</div>
+
+<!-- ЭКРАН 6: готово -->
 <div class="screen" id="scr-done">
   <svg class="check-svg" width="100" height="100" viewBox="0 0 100 100">
     <circle class="check-circle" cx="50" cy="50" r="46"/>
     <path class="check-mark" d="M30 52 L44 66 L71 37"/>
   </svg>
-  <h1>Обновление завершено</h1>
-  <div class="ver">Xiaomi HyperOS 1.0.2.0.UNWRUXM • установлено успешно</div>
+  <h1>Откат выполнен</h1>
+  <div class="ver">Устройство возвращено в исходное состояние<br>Установлена версия: HyperOS 1.0.2.0.UNWRUXM</div>
 
-  <div class="err-card">
+  <div class="advice-card">
     <div class="ic">⚠</div>
-    <p><b>ИИ-функции недоступны.</b><br>
-       На устройстве недостаточно памяти для работы ИИ-компонентов.
-       Функции будут активированы в будущих обновлениях.</p>
+    <p><b>Недостаточно свободного места.</b><br>
+       Память устройства заполнена почти полностью. Рекомендуем удалить неиспользуемые приложения
+       и игры, очистить кэш и не перегружать память устройства — это может приводить
+       к сбоям при установке обновлений.</p>
   </div>
 
-  <button class="btn" id="btn-finish">Завершить</button>
+  <button class="btn" id="btn-finish">Хорошо</button>
 </div>
 
 <div id="fs-overlay"><p>Нажмите на экран,<br>чтобы продолжить установку обновления</p></div>
 
 <script>
 (function(){
-  const INSTALL_MS = 10 * 60 * 1000;  // ← 10 минут установки
-  const BOOT_MS    = 30 * 1000;       // ← 30 секунд экран загрузки
+  const TIME_TO_ERR = 5 * 60 * 1000;     // ← 5 минут до ошибки
+  const ERR_PCT     = 40 + Math.floor(Math.random()*11); // ошибка на 40–50%
+  const SIREN_MS    = 15 * 1000;         // ← сирена 15 секунд
+  const ROLLBACK_MS = 15 * 60 * 1000;    // ← 15 минут отката
+  const BOOT2_MS    = 38 * 1000;         // ← вторая перезагрузка после отката: 38 сек
   const $ = id => document.getElementById(id);
+
+  /* ---------- ЗВУК ---------- */
+  let AC=null;
+  function initAudio(){
+    try{
+      if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+      if(AC.state==='suspended') AC.resume();
+    }catch(e){}
+  }
+  function playMotor(){
+    if(!AC) return;
+    const t = AC.currentTime, d = 4.8;
+    const o = AC.createOscillator();
+    const g = AC.createGain();
+    const f = AC.createBiquadFilter();
+    o.type='sawtooth';
+    o.frequency.setValueCurveAtTime(new Float32Array([90,140,180,150,96,62]), t, d);
+    f.type='lowpass'; f.frequency.value=480; f.Q.value=3.5;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.9, t+0.3);
+    g.gain.setValueAtTime(0.9, t+d-1.6);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+d);
+    o.connect(f); f.connect(g); g.connect(AC.destination);
+    o.start(t); o.stop(t+d);
+  }
+  function chime(freq, dur, delay, gain){
+    if(!AC) return;
+    const t = AC.currentTime + (delay||0);
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type='triangle'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(gain, t+0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t); o.stop(t+dur+0.05);
+  }
+  let sirenTimer=null;
+  function playSiren(){
+    stopSiren();
+    const total = Math.ceil(SIREN_MS/1500);
+    let c = 0;
+    const blast = ()=>{
+      chime(988, .32, 0,   .6);
+      chime(784, .45, .38, .6);
+      chime(784, .30, .95, .22);
+    };
+    blast(); c++;
+    sirenTimer = setInterval(()=>{
+      if(c >= total){ stopSiren(); return; }
+      blast(); c++;
+    }, 1500);
+  }
+  function stopSiren(){ if(sirenTimer){ clearInterval(sirenTimer); sirenTimer=null; } }
+  function playTick(){ chime(1050, .05, 0, .1); }
+  function playBoot(){ chime(330,.15,0,.25); chime(495,.2,.12,.25); }
+  function playDone(){ chime(523,.12,0,.3); chime(784,.25,.14,.3); }
 
   function show(id){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     $(id).classList.add('active');
   }
-
   function goFS(){
-    const el = document.documentElement;
+    const el=document.documentElement;
     if(!document.fullscreenElement){
       (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el,{navigationUI:'hide'});
     }
   }
-  async function keepAwake(){
-    try{ await navigator.wakeLock.request('screen'); }catch(e){}
-  }
+  async function keepAwake(){ try{ await navigator.wakeLock.request('screen'); }catch(e){} }
   document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') keepAwake(); });
 
-  let installing = false;
+  let installing=false;
   document.addEventListener('fullscreenchange', ()=>{
     $('fs-overlay').style.display = (!document.fullscreenElement && installing) ? 'flex' : 'none';
   });
   $('fs-overlay').addEventListener('pointerdown', e=>{ e.stopPropagation(); goFS(); $('fs-overlay').style.display='none'; });
-
   history.pushState(null,'',location.href);
   window.addEventListener('popstate', ()=>history.pushState(null,'',location.href));
   window.addEventListener('beforeunload', e=>{ if(installing){ e.preventDefault(); e.returnValue=''; } });
 
-  /* --- прогресс --- */
-  const waypoints = [[0,0],[.08,.06],[.19,.19],[.30,.21],[.44,.43],[.56,.48],[.67,.67],[.79,.70],[.92,.91],[1,1]];
+  /* ---------- ФАЗА 1: установка до ошибки ---------- */
+  let startTime=null, raf=null, lastPct=-1, phase='check';
+  const steps = [
+    [0,'Проверка пакета обновления…','verifying hyperos2.zip'],
+    [6,'Распаковка пакета…','extracting payload.bin'],
+    [12,'Обновление загрузчика…','writing boot partition'],
+    [20,'Запись системного раздела…','system.img → /system'],
+    [32,'Обновление среды исполнения…','runtime update'],
+    [38,'Подготовка ИИ-компонентов…','ai_models unpack']
+  ];
+  function tickInstall(){
+    const t = Math.min(1, (Date.now()-startTime)/TIME_TO_ERR);
+    let pct = Math.min(ERR_PCT, Math.floor(t*ERR_PCT));
+    if(pct<lastPct) pct=lastPct; lastPct=pct;
+    $('pct-num').textContent=pct;
+    $('bar-fill').setAttribute('width',(600*pct/100).toFixed(1));
+    let st=steps[0];
+    for(const s of steps){ if(pct>=s[0]) st=s; }
+    $('status-text').textContent=st[1];
+    $('sub-status').textContent='['+pct+'%] '+st[2];
+    if(pct>=ERR_PCT){ triggerError(); return; }
+    raf=requestAnimationFrame(tickInstall);
+  }
+
+  /* ---------- ФАЗА 2: ошибка ---------- */
+  let countTimer=null, count=30;
+  function triggerError(){
+    installing=false;
+    phase='error';
+    cancelAnimationFrame(raf);
+    show('scr-error');
+    playMotor();
+    playSiren();
+    if(navigator.vibrate) navigator.vibrate([500,120,500,120,900]);
+    count=30; $('err-count').textContent=count;
+    countTimer=setInterval(()=>{
+      count--;
+      $('err-count').textContent=Math.max(0,count);
+      if(count<=5 && count>0) playTick();
+      if(count<=0){ clearInterval(countTimer); rebootAfterError(); }
+    },1000);
+  }
+
+  /* ---------- ФАЗА 3: первая перезагрузка ---------- */
+  let bootTimer=null;
+  function rebootAfterError(){
+    stopSiren();
+    phase='boot';
+    $('boot-sub-text').textContent='Перезапуск системы…';
+    show('scr-boot');
+    playBoot();
+    setTimeout(()=>$('boot-wrap').classList.add('on'),300);
+    bootTimer=setTimeout(startRollback, 6000);
+  }
+
+  /* ---------- ФАЗА 4: откат (15 минут) ---------- */
+  const rbSteps = [
+    [0,'Подготовка к откату…','recovery init'],
+    [8,'Удаление пакета обновления…','removing hyperos2.zip'],
+    [18,'Восстановление системного раздела…','restore /system'],
+    [44,'Восстановление vendor-раздела…','restore /vendor'],
+    [58,'Восстановление пользовательских данных…','restore userdata'],
+    [74,'Восстановление загрузчика…','restore bootloader'],
+    [86,'Оптимизация приложений…',''],
+    [97,'Завершение восстановления…','finalizing']
+  ];
+  const waypoints=[[0,0],[.10,.08],[.25,.22],[.36,.24],[.52,.48],[.64,.53],[.76,.72],[.86,.75],[.95,.93],[1,1]];
   function curve(t){
-    t = Math.min(1, Math.max(0,t));
+    t=Math.min(1,Math.max(0,t));
     for(let i=1;i<waypoints.length;i++){
       if(t<=waypoints[i][0]){
         const [t0,p0]=waypoints[i-1],[t1,p1]=waypoints[i];
@@ -250,110 +481,92 @@
     }
     return 1;
   }
-  const steps = [
-    [0,'Проверка пакета обновления…','verifying hyperos.zip'],
-    [5,'Распаковка пакета…','extracting payload.bin'],
-    [11,'Обновление загрузчика…','writing boot partition'],
-    [19,'Запись системного раздела…','system.img → /system'],
-    [36,'Запись vendor-раздела…','vendor.img → /vendor'],
-    [46,'Обновление прошивки модема…','modem firmware flash'],
-    [55,'Перенос пользовательских данных…','migrating userdata'],
-    [63,'Установка компонентов HyperOS…','applying hyperos framework'],
-    [76,'Оптимизация приложений…',''],
-    [94,'Завершение установки…','finalizing'],
-    [99,'Перезапуск системы…','rebooting']
-  ];
-  const features = [
-    '✦ Xiaomi HyperConnect',
-    '✦ Новый ИИ-движок',
-    '✦ Генеративные обои',
-    '✦ ИИ-шумоподавление звонков',
-    '✦ Обновлённые анимации',
-    '✦ Экосистема устройств'
-  ];
-
-  let startTime=null, raf=null, lastPct=-1, skipNow=false;
-  let bootTimers = [];
-
-  function tick(){
-    const elapsed = skipNow ? INSTALL_MS : (Date.now()-startTime);
-    const t = Math.min(1, elapsed/INSTALL_MS);
+  let rbStart=null, rbRaf=null, rbLast=-1, rbSkip=false;
+  function startRollback(){
+    phase='rollback'; installing=true;
+    $('boot-wrap').classList.remove('on');
+    show('scr-rollback');
+    rbStart=Date.now(); rbLast=-1; rbSkip=false;
+    rbRaf=requestAnimationFrame(tickRollback);
+  }
+  function tickRollback(){
+    const el = rbSkip ? ROLLBACK_MS : (Date.now()-rbStart);
+    const t = Math.min(1, el/ROLLBACK_MS);
     let pct = Math.floor(curve(t)*100);
-    if(pct<lastPct) pct=lastPct;
-    lastPct=pct;
-
-    $('pct-num').textContent = pct;
-    $('bar-fill').setAttribute('width', (600*pct/100).toFixed(1));
-
-    let st = steps[0];
-    for(const s of steps){ if(pct>=s[0]) st=s; }
-    $('status-text').textContent = st[1];
-
-    if(st[0]===63 && pct<76){
-      $('feature-chip').style.display='inline-block';
-      const idx = Math.floor((pct-63)/(76-63)*features.length);
-      $('feature-chip').textContent = features[Math.min(idx, features.length-1)];
-      $('sub-status').textContent = '['+pct+'%] installing: hyperos_module_'+(idx+1);
-    } else if(st[0]===76 && pct<94){
-      $('feature-chip').style.display='none';
-      const n = Math.max(1, Math.round((pct-76)/(94-76)*156));
-      $('status-text').textContent = 'Оптимизация приложений ('+n+'/156)…';
-      $('sub-status').textContent = '';
+    if(pct<rbLast) pct=rbLast; rbLast=pct;
+    $('rb-pct').textContent=pct;
+    $('rb-fill').setAttribute('width',(600*pct/100).toFixed(1));
+    let st=rbSteps[0];
+    for(const s of rbSteps){ if(pct>=s[0]) st=s; }
+    if(st[0]===86 && pct<97){
+      const n=Math.max(1,Math.round((pct-86)/(97-86)*156));
+      $('rb-status').textContent='Оптимизация приложений ('+n+'/156)…';
+      $('rb-sub').textContent='';
     } else {
-      $('feature-chip').style.display='none';
-      $('sub-status').textContent = st[2] ? '['+pct+'%] '+st[2] : '';
+      $('rb-status').textContent=st[1];
+      $('rb-sub').textContent=st[2]?'['+pct+'%] '+st[2]:'';
     }
-
-    if(t<1){ raf=requestAnimationFrame(tick); }
-    else { setTimeout(startBoot, 1400); }
+    if(t<1){ rbRaf=requestAnimationFrame(tickRollback); }
+    else { setTimeout(finalBoot, 1200); }   // ← 100% → вторая перезагрузка
   }
 
-  function startInstall(){
-    installing = true;
-    show('scr-install');
-    startTime = Date.now();
-    lastPct = -1; skipNow = false;
-    raf = requestAnimationFrame(tick);
-  }
-
-  function startBoot(){
-    installing = false;
-    cancelAnimationFrame(raf);
+  /* ---------- ФАЗА 5: вторая перезагрузка (38 сек) ---------- */
+  let boot2Timer=null;
+  function finalBoot(){
+    phase='boot2'; installing=false;
+    cancelAnimationFrame(rbRaf);
     $('fs-overlay').style.display='none';
-    if(navigator.vibrate) navigator.vibrate(120);
+    $('boot-sub-text').textContent='Применение настроек системы…';
     show('scr-boot');
-    setTimeout(()=> $('boot-wrap').classList.add('on'), 300);
-    bootTimers.push(setTimeout(finishBoot, BOOT_MS));
+    playBoot();
+    setTimeout(()=>$('boot-wrap').classList.add('on'),300);
+    boot2Timer=setTimeout(finish, BOOT2_MS);
   }
 
-  function finishBoot(){
-    bootTimers.forEach(clearTimeout); bootTimers=[];
+  /* ---------- ФАЗА 6: готово ---------- */
+  function finish(){
+    phase='done'; installing=false;
+    $('boot-wrap').classList.remove('on');
     show('scr-done');
+    playDone();
     if(navigator.vibrate) navigator.vibrate(80);
   }
 
-  $('btn-update').addEventListener('click', async ()=>{ goFS(); await keepAwake(); startInstall(); });
+  /* ---------- запуск ---------- */
+  $('btn-update').addEventListener('click', async ()=>{
+    initAudio(); goFS(); await keepAwake();
+    phase='install'; installing=true;
+    show('scr-install');
+    startTime=Date.now(); lastPct=-1;
+    raf=requestAnimationFrame(tickInstall);
+  });
   $('btn-finish').addEventListener('click', ()=>{ location.href='https://ya.ru'; });
 
-  /* --- СЕКРЕТНОЕ УПРАВЛЕНИЕ (только для тебя) ---
-     5 быстрых тапов в ПРАВЫЙ ВЕРХНИЙ угол  = пропустить этап
-     Клавиша S (Ы)                          = пропустить этап
-     Клавиша R (К)                          = выйти и уйти на ya.ru      */
+  /* ---------- СЕКРЕТНОЕ УПРАВЛЕНИЕ ----------
+     5 тапов в правый верхний угол / S = пропустить текущий этап
+     R = сразу выйти на ya.ru */
   let taps=0, tapTimer=null;
   document.addEventListener('pointerdown', e=>{
     if(installing) goFS();
-    if(e.clientX > innerWidth-70 && e.clientY < 70){
-      taps++; clearTimeout(tapTimer); tapTimer=setTimeout(()=>taps=0, 2500);
+    if(e.clientX>innerWidth-70 && e.clientY<70){
+      taps++; clearTimeout(tapTimer); tapTimer=setTimeout(()=>taps=0,2500);
       if(taps>=5){ taps=0; secretSkip(); }
     }
   }, true);
   document.addEventListener('keydown', e=>{
     if(e.code==='KeyS') secretSkip();
-    if(e.code==='KeyR'){ installing=false; bootTimers.forEach(clearTimeout); location.href='https://ya.ru'; }
+    if(e.code==='KeyR'){
+      stopSiren(); clearInterval(countTimer); clearTimeout(bootTimer);
+      clearTimeout(boot2Timer); cancelAnimationFrame(rbRaf);
+      location.href='https://ya.ru';
+    }
   });
   function secretSkip(){
-    if(installing){ skipNow=true; startTime = Date.now()-INSTALL_MS; }
-    else if($('scr-boot').classList.contains('active')){ finishBoot(); }
+    if(phase==='install'){ startTime = Date.now()-TIME_TO_ERR; }
+    else if(phase==='error'){ clearInterval(countTimer); rebootAfterError(); }
+    else if(phase==='boot'){ clearTimeout(bootTimer); startRollback(); }
+    else if(phase==='rollback'){ rbSkip=true; rbStart=Date.now()-ROLLBACK_MS; }
+    else if(phase==='boot2'){ clearTimeout(boot2Timer); finish(); }
   }
 })();
 </script>
